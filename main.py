@@ -7,7 +7,6 @@ Exemplos:
     python main.py --experimentos --n 30 --seed 2026 --saida resultados
     python main.py --todos
 
-Os intervalos de flip utilizam índices inclusivos iniciados em 1.
 """
 from __future__ import annotations
 

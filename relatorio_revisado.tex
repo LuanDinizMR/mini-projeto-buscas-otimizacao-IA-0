@@ -11,9 +11,15 @@
 \usepackage{enumitem,needspace,listings,xcolor}
 \setlist{nosep,leftmargin=*}
 \setlength{\parindent}{1em}
-\setlength{\parskip}{.17em}
-\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
-\setlength{\intextsep}{7pt plus 2pt minus 2pt}
+\setlength{\parskip}{.10em}
+\setlength{\textfloatsep}{6pt plus 2pt minus 2pt}
+\setlength{\intextsep}{5pt plus 2pt minus 2pt}
+\AtBeginDocument{%
+  \setlength{\abovedisplayskip}{6pt plus 2pt minus 2pt}%
+  \setlength{\belowdisplayskip}{6pt plus 2pt minus 2pt}%
+  \setlength{\abovedisplayshortskip}{3pt plus 1pt minus 1pt}%
+  \setlength{\belowdisplayshortskip}{4pt plus 1pt minus 1pt}%
+}
 \lstdefinestyle{pytrecho}{
   language=Python, basicstyle=\ttfamily\scriptsize,
   frame=single, framerule=.3pt, rulecolor=\color{black!35},
@@ -25,7 +31,7 @@
   tabsize=4
 }
 \lstset{style=pytrecho}
-\title{Mini-projeto: Buscas Clássicas e Otimização Contínua}
+\title{Mini-Projeto: Buscas Clássicas E Otimização Contínua}
 \author{Luan Diniz Mazaro Rodovalho}
 \date{}
 \begin{document}
@@ -96,7 +102,8 @@ As implementações foram examinadas utilizando a sequência inicial \texttt{000
 \section{Metodologia e resultados das buscas}
 A avaliação experimental foi organizada em 12 comprimentos, $L\in\{2,4,8,\ldots,4096\}$. Para cada comprimento, foram gerados $N=30$ pares independentes de sequências com bits equiprováveis, utilizando o gerador do NumPy com semente 2026. Foram registrados o custo encontrado, o tempo de execução, a quantidade de estados expandidos e o número de sucessores gerados. O tempo foi medido com \texttt{time.perf\_counter}, e os dados individuais foram exportados para arquivos CSV.
 
-A BFS e a busca \textit{Best-First} explícita foram executadas até $L=16$. Para os comprimentos restantes, foi avaliada somente a versão gulosa otimizada, uma vez que a enumeração exaustiva de vizinhos tornaria as demais abordagens impraticáveis. Nos tamanhos compartilhados, as três implementações obtiveram o mesmo custo ótimo. Na Tabela~\ref{tab:busca}, os traços indicam experimentos não realizados, sem representar tempos nulos.
+Os testes com buscas convencionais foram limitados após a análise de seu custo computacional. Em $L=16$, a BFS gerou, em média, 3,8 milhões de sucessores por par, com tempo de 280 ms. Tanto a BFS quanto a \textit{Best-First} enumeram $L(L+1)/2$ intervalos por estado expandido: em $L=2^{12}=4096$, seriam $8.390.656$ candidatos \emph{em uma única expansão}. A BFS ainda enfrenta crescimento exponencial dos estados visitados; a \textit{Best-First}, embora mais seletiva, repetiria a geração de milhões de vizinhos ao longo do caminho. Por esses motivos, fixou-se $L=16$ como limite comum das buscas explícitas, sem pressupor que a \textit{Best-First} fosse inviável em todos os tamanhos intermediários. Para comprimentos maiores, foi executada a versão otimizada, que identifica os blocos em $O(L)$ sem gerar vizinhos. As três versões coincidiram no custo nos tamanhos compartilhados. Na Tabela~\ref{tab:busca}, ``--'' significa experimento não executado, e não tempo nulo.
+
 \begin{table}[htbp]
 \centering
 \caption{Resultados médios de 30 pares por tamanho; tempos em ms.}
@@ -228,8 +235,8 @@ Os resultados da Tabela~\ref{tab:gd} indicaram que o aumento de $\lambda$ reduzi
 A trajetória da função objetivo também foi registrada em cada iteração. As execuções apresentaram redução do valor de $J$ até os critérios de parada definidos; esse resultado, contudo, não implica a minimização do número de operações discretas. O gráfico de convergência foi preservado entre os arquivos de resultados do projeto.
 
 \section{Considerações finais}
-A implementação das buscas permitiu contrastar o custo computacional da exploração explícita de estados com o aproveitamento de uma propriedade estrutural do problema. A BFS forneceu a referência de caminho mínimo nos tamanhos testados, enquanto a heurística baseada em blocos possibilitou construir soluções ótimas sem enumerar todas as inversões possíveis. Na etapa contínua, a penalização de adjacência favoreceu perfis de transformação espacialmente mais uniformes, embora valores elevados de $\lambda$ tenham comprometido a correspondência com a sequência-alvo. Assim, as duas formulações abordaram critérios distintos: a primeira minimizou o número exato de operações, ao passo que a segunda equilibrou erro e regularidade das alterações.
+A avaliação evidenciou o alto custo da enumeração de estados na BFS e na \textit{Best-First}, em contraste com a exploração direta dos blocos de diferenças. Esta última permitiu obter soluções discretas de custo ótimo até 4096 bits. Na formulação contínua, a penalidade de adjacência reduziu as variações entre posições vizinhas, mas valores elevados de $\lambda$ aumentaram a divergência em relação ao alvo. Portanto, as abordagens atenderam a objetivos distintos: minimizar o número de inversões ou equilibrar fidelidade e regularidade.
 
-A implementação foi verificada em 256 pares de estados de quatro bits, pela comparação do gradiente com diferenças finitas e pela análise da evolução de $J$. Código, tabelas e gráficos foram disponibilizados no \href{https://github.com/LuanDinizMR/mini-projeto-buscas-otimizacao-IA-0}{repositório GitHub do projeto}, com execução via \texttt{python mini\_projeto.py --todos}.
+A correção das buscas foi conferida em 256 pares de estados de quatro bits; o gradiente também foi verificado por diferenças finitas. Código, tabelas e gráficos estão disponíveis no \href{https://github.com/LuanDinizMR/mini-projeto-buscas-otimizacao-IA-0}{repositório GitHub}, com execução via \texttt{python main.py --todos}.
 
 \end{document}

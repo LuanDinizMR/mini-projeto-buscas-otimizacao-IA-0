@@ -237,6 +237,9 @@ A trajetória da função objetivo também foi registrada em cada iteração. As
 \section{Considerações finais}
 A avaliação evidenciou o alto custo da enumeração de estados na BFS e na \textit{Best-First}, em contraste com a exploração direta dos blocos de diferenças. Esta última permitiu obter soluções discretas de custo ótimo até 4096 bits. Na formulação contínua, a penalidade de adjacência reduziu as variações entre posições vizinhas, mas valores elevados de $\lambda$ aumentaram a divergência em relação ao alvo. Portanto, as abordagens atenderam a objetivos distintos: minimizar o número de inversões ou equilibrar fidelidade e regularidade.
 
-A correção das buscas foi conferida em 256 pares de estados de quatro bits; o gradiente também foi verificado por diferenças finitas. Código, tabelas e gráficos estão disponíveis no \href{https://github.com/LuanDinizMR/mini-projeto-buscas-otimizacao-IA-0}{repositório GitHub}, com execução via \texttt{python main.py --todos}.
+A correção das buscas foi conferida em 256 pares de estados de quatro bits; o gradiente também foi verificado por diferenças finitas. Os códigos, as tabelas e os gráficos estão disponíveis no \href{https://github.com/LuanDinizMR/mini-projeto-buscas-otimizacao-IA-0}{repositório GitHub}. Para reproduzir a execução completa, foi utilizado o seguinte comando no terminal, a partir da pasta principal do projeto:
+\begin{center}
+\verb|python main.py --todos|
+\end{center}
 
 \end{document}

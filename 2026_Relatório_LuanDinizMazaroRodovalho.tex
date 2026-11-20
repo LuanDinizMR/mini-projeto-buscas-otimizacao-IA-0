@@ -1,49 +1,38 @@
-\documentclass[10pt,a4paper,twocolumn]{article}
+\documentclass[conference,a4paper]{IEEEtran}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[brazil]{babel}
 \usepackage{lmodern}
-\usepackage[margin=1.55cm,columnsep=0.65cm]{geometry}
-\usepackage{amsmath,amssymb,booktabs,graphicx,microtype,url}
-\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{amsmath,amssymb,booktabs,graphicx,microtype}
 \usepackage{xurl}
 \usepackage[hidelinks]{hyperref}
-\usepackage{enumitem,needspace,listings,xcolor}
-\setlist{nosep,leftmargin=*}
-\setlength{\parindent}{1em}
-\setlength{\parskip}{.10em}
-\setlength{\textfloatsep}{6pt plus 2pt minus 2pt}
-\setlength{\intextsep}{5pt plus 2pt minus 2pt}
-\AtBeginDocument{%
-  \setlength{\abovedisplayskip}{6pt plus 2pt minus 2pt}%
-  \setlength{\belowdisplayskip}{6pt plus 2pt minus 2pt}%
-  \setlength{\abovedisplayshortskip}{3pt plus 1pt minus 1pt}%
-  \setlength{\belowdisplayshortskip}{4pt plus 1pt minus 1pt}%
-}
+\usepackage{listings,xcolor}
+\hyphenation{Best-First}
 \lstdefinestyle{pytrecho}{
-  language=Python, basicstyle=\ttfamily\scriptsize,
-  frame=single, framerule=.3pt, rulecolor=\color{black!35},
-  backgroundcolor=\color{black!3},
-  aboveskip=4pt, belowskip=4pt,
-  xleftmargin=2pt,xrightmargin=2pt,
-  breaklines=true,breakatwhitespace=true,
-  showstringspaces=false,columns=fullflexible,keepspaces=true,
-  tabsize=4
+ language=Python,basicstyle=\ttfamily\scriptsize,
+ frame=single,framerule=.3pt,rulecolor=\color{black!35},
+ backgroundcolor=\color{black!3},
+ aboveskip=3pt,belowskip=3pt,
+ xleftmargin=2pt,xrightmargin=2pt,
+ breaklines=true,breakatwhitespace=true,
+ showstringspaces=false,columns=fullflexible,keepspaces=true,
+ tabsize=4
 }
 \lstset{style=pytrecho}
-\title{Mini-Projeto: Buscas Clássicas E Otimização Contínua}
-\author{Luan Diniz Mazaro Rodovalho}
-\date{}
+\title{Mini-Projeto: Buscas Clássicas e Otimização Contínua}
+\author{\IEEEauthorblockN{Luan Diniz Mazaro Rodovalho}
+\IEEEauthorblockA{Universidade Federal de Uberlândia (UFU)\\Brasil}}
 \begin{document}
 \maketitle
-\vspace{-2.7em}
 
-\begin{abstract}\noindent
+\begin{abstract}
 Este trabalho apresenta a implementação e a avaliação de métodos de busca em espaço discreto e de otimização contínua aplicados à transformação de sequências binárias. Na primeira etapa, foram desenvolvidas uma busca em largura (BFS), uma busca gulosa \textit{Best-First} e uma variante gulosa que explora a estrutura dos intervalos de bits. Na segunda etapa, foi implementado o gradiente descendente projetado, com posterior inclusão de uma penalidade para alterações não consecutivas. Os experimentos utilizaram 30 pares aleatórios para cada comprimento entre 2 e 4096 bits; em razão do crescimento combinatório, as buscas com enumeração explícita foram avaliadas apenas até 16 bits.
 \end{abstract}
-\vspace{-.7em}
+\begin{IEEEkeywords}
+Busca em largura, busca gulosa, sequências binárias, gradiente descendente, otimização.
+\end{IEEEkeywords}
 
-\section{Modelagem do problema e operações de flip}
+\section{Modelagem do Problema e Operações de Flip}
 O problema inicial consistiu em transformar uma sequência binária $s\in\{0,1\}^L$ em outra sequência $t$ do mesmo comprimento. Para isso, foram consideradas duas operações: a inversão de um único bit e a inversão de um intervalo de bits consecutivos. Ambas receberam custo unitário, independentemente do número de posições modificadas. A operação sobre um intervalo inclusivo $[i,j]$ foi formalizada por
 \begin{equation}
 F_{i,j}(s)_k=\begin{cases}1-s_k,&i\leq k\leq j,\\s_k,&\text{caso contrário.}\end{cases}
@@ -62,7 +51,7 @@ return pre + mid + estado[fim:]
 
 A identificação das posições a modificar foi realizada por meio da diferença binária $d=s\oplus t$. Nessa representação, cada bit igual a 1 indicou uma divergência em relação ao estado-alvo. A análise dos blocos máximos de 1 também fundamentou a heurística e a posterior interpretação do custo ótimo.
 
-\section{Implementação das buscas clássicas}
+\section{Implementação das Buscas Clássicas}
 \subsection{Busca em largura (BFS)}
 A BFS foi implementada com uma fila FIFO, iniciada pelo estado de origem. Cada estado removido da fila foi expandido mediante a geração de todos os $L(L+1)/2$ intervalos possíveis. Para representar as inversões, foram construídas máscaras binárias aplicadas ao estado por XOR. Cada estado descoberto recebeu um predecessor e a operação utilizada, permitindo reconstruir o caminho após a identificação do objetivo. O trecho central da expansão foi:
 \begin{lstlisting}
@@ -99,7 +88,7 @@ O levantamento desses intervalos exigiu uma única varredura da sequência, com 
 \subsection{Aplicação ao exemplo do enunciado}
 As implementações foram examinadas utilizando a sequência inicial \texttt{00001001000011001100111} e o objetivo \texttt{00000000000000000000000}. A diferença entre as sequências apresentou cinco blocos: $[5,5]$, $[8,8]$, $[13,14]$, $[17,18]$ e $[21,23]$, considerando índices iniciados em 1. A inversão sucessiva desses intervalos produziu o estado desejado com \textbf{custo total igual a 5}. O resultado foi obtido pela versão gulosa otimizada e corresponde ao ótimo demonstrado pela propriedade dos blocos.
 
-\section{Metodologia e resultados das buscas}
+\section{Metodologia e Resultados das Buscas}
 A avaliação experimental foi organizada em 12 comprimentos, $L\in\{2,4,8,\ldots,4096\}$. Para cada comprimento, foram gerados $N=30$ pares independentes de sequências com bits equiprováveis, utilizando o gerador do NumPy com semente 2026. Foram registrados o custo encontrado, o tempo de execução, a quantidade de estados expandidos e o número de sucessores gerados. O tempo foi medido com \texttt{time.perf\_counter}, e os dados individuais foram exportados para arquivos CSV.
 
 Os testes com buscas convencionais foram limitados após a análise de seu custo computacional. Em $L=16$, a BFS gerou, em média, 3,8 milhões de sucessores por par, com tempo de 280 ms. Tanto a BFS quanto a \textit{Best-First} enumeram $L(L+1)/2$ intervalos por estado expandido: em $L=2^{12}=4096$, seriam $8.390.656$ candidatos \emph{em uma única expansão}. A BFS ainda enfrenta crescimento exponencial dos estados visitados; a \textit{Best-First}, embora mais seletiva, repetiria a geração de milhões de vizinhos ao longo do caminho. Por esses motivos, fixou-se $L=16$ como limite comum das buscas explícitas, sem pressupor que a \textit{Best-First} fosse inviável em todos os tamanhos intermediários. Para comprimentos maiores, foi executada a versão otimizada, que identifica os blocos em $O(L)$ sem gerar vizinhos. As três versões coincidiram no custo nos tamanhos compartilhados. Na Tabela~\ref{tab:busca}, ``--'' significa experimento não executado, e não tempo nulo.
@@ -108,7 +97,7 @@ Os testes com buscas convencionais foram limitados após a análise de seu custo
 \centering
 \caption{Resultados médios de 30 pares por tamanho; tempos em ms.}
 \label{tab:busca}
-\scriptsize\setlength{\tabcolsep}{3.5pt}
+\scriptsize\setlength{\tabcolsep}{2.5pt}
 \begin{tabular}{rrrrr}
 \toprule
 $L$ & Custo & BFS & Gulosa & Otimizada\\
@@ -139,7 +128,7 @@ Os dados mostraram um aumento expressivo do trabalho realizado pela BFS. Para $L
 
 A quantidade média de operações aumentou com o comprimento das sequências, em concordância com $\mathbb{E}[h]=(L+1)/4$ para pares independentes com bits equiprováveis. Acima de $L=16$, os custos foram calculados exclusivamente pela versão otimizada, cuja otimalidade foi demonstrada analiticamente.
 
-\section{Otimização por gradiente descendente}
+\section{Otimização por Gradiente Descendente}
 \subsection{Representação contínua e função erro}
 Na segunda parte, cada bit foi representado por uma variável contínua $x_i\in[0,1]$. O vetor binário inicial foi denominado $x^{(0)}$ e o estado-alvo foi representado por $y$. Inicialmente, foi utilizada a função de erro quadrático proposta no enunciado:
 \begin{equation}
@@ -203,14 +192,14 @@ return 2*(x-y) + 2*lam*a*laplaciano
 
 As iterações utilizaram o gradiente projetado, $x^{(k+1)}=\Pi_{[0,1]^L}[x^{(k)}-\eta\nabla J(x^{(k)})]$, com a taxa $\eta=0{,}9/(2+8\lambda)$. Esse valor foi selecionado de forma conservadora a partir de um limite superior para a curvatura da função quadrática.
 
-\section{Experimentos com a penalidade}
+\section{Experimentos com a Penalidade}
 A influência de $\lambda$ foi avaliada sobre o exemplo de 23 bits, considerando $\lambda\in\{0;0{,}05;0{,}25;1;4\}$. Foi adotado um limite de $10^4$ iterações e tolerância de $10^{-11}$ para a maior alteração absoluta entre passos consecutivos. Após a otimização, os vetores contínuos foram convertidos em sequências binárias por um limiar de $0{,}5$; a quantidade de bits divergentes em relação ao alvo foi registrada como uma medida adicional de fidelidade.
 
 \begin{table}[htbp]
 \centering
 \caption{Resultados do gradiente descendente para diferentes $\lambda$.}
 \label{tab:gd}
-\scriptsize\setlength{\tabcolsep}{3.6pt}
+\scriptsize\setlength{\tabcolsep}{3pt}
 \begin{tabular}{rrrrrr}
 \toprule
 $\lambda$ & Iter. & $\mathcal L$ & $C$ & $J$ & Erros\\
@@ -234,7 +223,7 @@ Os resultados da Tabela~\ref{tab:gd} indicaram que o aumento de $\lambda$ reduzi
 
 A trajetória da função objetivo também foi registrada em cada iteração. As execuções apresentaram redução do valor de $J$ até os critérios de parada definidos; esse resultado, contudo, não implica a minimização do número de operações discretas. O gráfico de convergência foi preservado entre os arquivos de resultados do projeto.
 
-\section{Considerações finais}
+\section{Considerações Finais}
 A avaliação evidenciou o alto custo da enumeração de estados na BFS e na \textit{Best-First}, em contraste com a exploração direta dos blocos de diferenças. Esta última permitiu obter soluções discretas de custo ótimo até 4096 bits. Na formulação contínua, a penalidade de adjacência reduziu as variações entre posições vizinhas, mas valores elevados de $\lambda$ aumentaram a divergência em relação ao alvo. Portanto, as abordagens atenderam a objetivos distintos: minimizar o número de inversões ou equilibrar fidelidade e regularidade.
 
 A correção das buscas foi conferida em 256 pares de estados de quatro bits; o gradiente também foi verificado por diferenças finitas. Os códigos, as tabelas e os gráficos estão disponíveis no \href{https://github.com/LuanDinizMR/mini-projeto-buscas-otimizacao-IA-0}{repositório GitHub}. Para reproduzir a execução completa, foi utilizado o seguinte comando no terminal, a partir da pasta principal do projeto:
